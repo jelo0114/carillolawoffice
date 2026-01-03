@@ -1,0 +1,47 @@
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color:#222;
+  background: url('iridescent-tote-bag-sits-on-a-light-wood-surface-against-a-blue-wall-photo.jpg') no-repeat center/cover fixed;
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem; position:relative;
+}
+body::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,0.28), rgba(0,0,0,0.28));pointer-events:none}
+
+.auth-card{ width:420px; max-width:96vw; background:linear-gradient(180deg,#fff,#fbfbfb); border-radius:14px; padding:34px 36px; box-shadow:0 14px 40px rgba(0,0,0,0.28); border:1px solid rgba(0,0,0,0.06); position:relative; z-index:2; animation:slideInRight .5s ease }
+
+.tabs{ display:flex; gap:14px; justify-content:center; margin-bottom:16px }
+.tabs::after{ content:''; position:absolute; left:25%; bottom:10px; width:30%; height:3px; background:linear-gradient(90deg,#006923,#34a853); border-radius:3px; opacity:0.12 }
+.tab{ font-weight:700; padding:6px 10px; border-radius:8px; cursor:pointer; color:#2b2b2b }
+.tab.active{ color:#006923; background:rgba(0,105,54,0.06) }
+
+.form-group{ margin-bottom:14px }
+.form-group label{ display:block; font-size:.85rem; margin-bottom:6px; color:#445 }
+input[type="text"], input[type="email"], input[type="password"]{ width:100%; padding:12px 14px; border-radius:8px; border:1px solid #e6e9ec; background:#fff; font-size:0.95rem }
+input:focus{ border-color:#88b39d; box-shadow:0 6px 18px rgba(6,97,57,0.08) }
+
+.form-options{ display:flex; justify-content:space-between; align-items:center; font-size:.82rem; margin-bottom:12px }
+.main-btn{ display:inline-block; width:100%; padding:12px 14px; background:#006923; color:#fff; border-radius:10px; border:none; font-weight:700; font-size:1rem; cursor:pointer; box-shadow:0 10px 24px rgba(0,105,54,0.14) }
+.divider{ text-align:center; color:#707070; margin:14px 0; position:relative; font-size:.86rem }
+.divider::before, .divider::after{ content:''; position:absolute; top:50%; width:40%; height:1px; background:#ddd }
+.divider::before{ left:0 } .divider::after{ right:0 }
+.social-btn{ display:flex; gap:12px; align-items:center; justify-content:center; padding:10px; border-radius:10px; background:#fff; border:1px solid #e9e9ec; cursor:pointer; margin-bottom:10px }
+.social-btn img{ width:20px; height:20px; object-fit:contain }
+.logo-container{ position:absolute; top:18px; left:18px; z-index:3; display:flex; gap:10px; align-items:center }
+
+@keyframes slideInRight{ from{ opacity:0; transform:translateX(40px) } to{ opacity:1; transform:translateX(0) } }
+
+@media (max-width:520px){ .auth-card{ padding:22px } .tabs{ gap:10px } }
+
+/* Center the single Google social button inside the sign-up form and constrain its width */
+#sign-up-form .social-btn {
+  max-width: 320px;
+  width: auto;
+  margin: 0.6rem auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Return to home link inside form */
+.return-home{ display:inline-block; padding:8px 12px; border-radius:8px; color:#006923; background:transparent; border:1px solid rgba(0,105,35,0.12); text-decoration:none; font-weight:700 }
+.return-home:hover{ background:rgba(0,105,54,0.06) }

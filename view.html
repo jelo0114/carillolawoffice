@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Product View - JBR7 Bags</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        /* Scoped styles for view page */
+        /* Image zoom modal */
+        .img-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:12000}
+        .img-modal-overlay.active{display:flex}
+        .img-modal-overlay img{max-width:95%;max-height:90%;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+
+        .details-container{max-width:1100px;margin:2.5rem auto;padding:1rem 3%;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+        .product-gallery{display:flex;flex-direction:column;gap:1rem}
+        .product-main-img{width:100%;height:520px;object-fit:cover;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+        .thumbs{display:flex;gap:.5rem}
+        .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent}
+        .thumbs img.active{border-color:#006923}
+        .product-info h1{margin:0 0 .5rem;font-size:1.9rem}
+        .product-price{color:#006923;font-weight:700;font-size:1.5rem;margin-bottom:.5rem}
+        .product-desc{color:#444;line-height:1.6;margin-bottom:1rem}
+        .attributes{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+        .attr{padding:.45rem .8rem;border-radius:8px;border:1px solid #e6e6e6;background:#fff}
+    /* clickable size options inside .attr lists */
+    .attr ul li.size-option{cursor:pointer;padding:.15rem .35rem;border-radius:6px;display:list-item}
+    .attr ul li.size-option:hover{background:#f0f7f2}
+    .attr ul li.size-option.selected{background:#006923;color:#fff}
+        .actions{display:flex;gap:1rem;margin-top:1rem}
+        .btn{padding:.85rem 1.2rem;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+        .btn-primary{background:#006923;color:#fff}
+        .btn-outline{background:#fff;border:2px solid #006923;color:#006923}
+        .back-row{display:flex;align-items:center;gap:1rem;margin:1rem 3%}
+        @media(max-width:900px){.details-container{grid-template-columns:1fr;}.product-main-img{height:360px}}
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="home.html" class="logo">
+        <img src="JBR7 BAGS LOGO.jpg" alt="JBR7 BAGS LOGO" class="logo-img" onerror="this.style.display='none'">
+        <div class="logo-text">
+            <h2><span>JBR7</span> BAGS</h2>
+            <span class="sub-logo">MANUFACTURING</span>
+        </div>
+    </a>
+    <div class="header-sep" aria-hidden="true"></div>
+    <nav>
+        <a href="#home" onclick="handleNavigate('home')" data-page="home"><i class="fas fa-home"></i> Home</a>
+        <a href="#explore" onclick="handleNavigate('explore')" data-page="explore"><i class="fas fa-compass"></i> Explore</a>
+        <a href="#saved" onclick="handleNavigate('saved')" data-page="saved"><i class="fas fa-bookmark"></i> Saved</a>
+        <a href="#cart" onclick="handleNavigate('cart')" data-page="cart"><i class="fas fa-shopping-cart"></i> Cart</a>
+        <a href="#contact" onclick="handleNavigate('contact')" data-page="contact"><i class="fas fa-envelope"></i> Contact Us</a>
+        <a href="#settings" onclick="handleNavigate('settings')" data-page="settings"><i class="fas fa-cog"></i> Settings</a>
+        <a href="#search" onclick="handleNavigate('search')" data-page="search"><i class="fas fa-search"></i></a>
+        <a href="#notifications" onclick="handleNavigate('notifications')" data-page="notifications"><i class="fas fa-bell"></i></a>
+        <a href="#messages" onclick="handleNavigate('messages')" data-page="messages"><i class="fas fa-comment"></i></a>
+        <a href="#profile" onclick="handleNavigate('profile')" data-page="profile"><i class="fas fa-user-circle"></i></a>
+    </nav>
+</header>
+
+<div class="back-row">
+    <button class="btn btn-outline" id="backBtn"><i class="fas fa-arrow-left"></i> Back</button>
+    <div id="breadcrumb" style="color:#666;font-weight:600"></div>
+</div>
+
+<main>
+    <section class="details-container">
+        <div class="product-gallery">
+            <img id="mainImg" class="product-main-img" src="totebag.avif" alt="Product image">
+            <div class="thumbs" id="thumbs"></div>
+        </div>
+        <div class="product-info">
+            <h1 id="productTitle">Product Title</h1>
+            <div class="product-price" id="productPrice">₱0.00</div>
+            <div class="product-desc" id="productDesc">Product description will appear here. This area contains materials, dimensions and care instructions.</div>
+
+            <div class="attributes" id="attributes"></div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="addToCart">Add to cart</button>
+                <button class="btn btn-outline" id="saveItem">Save</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Image modal for zoom -->
+<div id="imgModal" class="img-modal-overlay" aria-hidden="true" role="dialog" onclick="closeImageModal()">
+    <img id="imgModalImg" src="" alt="Zoomed image">
+</div>
+
+<footer style="margin-top:3rem;padding:2rem 3%;background:#f7f7f7;text-align:center;color:#666">
+    &copy; 2025 JBR7 Bags Manufacturing
+</footer>
+
+<script src="home.js"></script>
+<script src="notifications.js"></script>
+<script>
+    // Demo PRODUCTS array; replace or extend to match your catalog
+    const PRODUCTS = [
+        { id: '1', slug: 'eco-jute-tote', title: 'Eco Jute Tote Bag', price: 45.00, imgs: ['totebag.avif', 'Tote Bag/Sizes.jpg', 'Tote Bag/Black.png', 'Tote Bag/Colored.png', 'Tote Bag/White.png'], desc: 'Sustainable jute tote with scallop top design, perfect for everyday use. Size: 40x35cm.', attrs: ['Eco-friendly', 'Cotton straps', 'Machine wash cold'], sizes: [{label:'8x10',price:35},{label:'10x12',price:45},{label:'13x15',price:50},{label:'14x16',price:55}] },
+        { id: '2', slug: 'module-backpack', title: 'Professional Module Backpack', price: 78.00, imgs: ['https://www.teqler.com/media/_processed_/6/8/csm_T131370_70518ba90d.jpg'], desc: 'Multi-compartment backpack with laptop sleeve and water-resistant fabric.', attrs: ['Laptop sleeve', 'Water-resistant', 'Multiple pockets'] },
+    { id: '3', slug: 'canvas-messenger', title: 'Canvas Messenger Bag', price: 62.00, imgs: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500'], desc: 'Classic canvas messenger with adjustable strap and multiple pockets.', attrs: ['Adjustable strap', 'Canvas material', 'One main compartment'] },
+    { id: '4', slug: 'riki-bag', title: 'Riki Bag', price: 38.00, imgs: ['Riki Bag/Riki.jpg','Riki Bag/View1.jpg','Riki Bag/View2.jpg','Riki Bag/View3.jpg'], desc: 'Minimalist Riki bag with clean lines and durable material.', attrs: ['Minimalist', 'Durable', 'Lightweight'] }
+    ,
+        // Demo ringlight product so ringlightDefaults render and can be inspected
+        { id: '5', slug: 'ringlight-bag', title: 'Ringlight Bag', price: 500.00, imgs: ['Ringlight/Sizes.jpg','Ringlight/Bag1.jpg'], desc: 'Protective bag designed to fit ring lights. Choose the size for 45cm or 55cm ring lights.', attrs: ['Padded interior','Zipper closure'], sizes: [{label:'18x21',price:500},{label:'22x22',price:550}] },
+        // Demo vanity/mirror product so vanity size list renders
+        { id: '6', slug: 'vanity-mirror-bag', title: 'Vanity Mirror Bag', price: 400.00, imgs: ['Vanity/Sizes.jpg','Vanity/Bag1.jpg'], desc: 'Padded bag for vanity mirrors. Select size for correct pricing.', attrs: ['Soft lining','Zipper closure'], sizes: [{label:'14x14',price:400},{label:'14x16',price:430},{label:'16x19',price:450},{label:'16x21',price:470},{label:'17x25',price:500},{label:'20x24',price:550},{label:'21x28',price:650}] }
+    ];
+
+    function qParam(name){
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+
+    function formatPrice(n){ return '₱' + Number(n).toFixed(2); }
+
+    function populate(product){
+        if(!product) return;
+        document.getElementById('productTitle').textContent = product.title;
+        document.getElementById('productPrice').textContent = formatPrice(product.price);
+        document.getElementById('productDesc').textContent = product.desc;
+        const main = document.getElementById('mainImg');
+        main.src = product.imgs[0] || 'totebag.avif';
+
+        // If this is an Eco Jute tote family (Black/White/Colored), ensure Sizes.jpg is present as the second image
+        const titleLower = (product.title || '').toLowerCase();
+        if ((titleLower.includes('eco jute') || titleLower.includes('tote')) ) {
+            // ensure 'Tote Bag/Sizes.jpg' is included once after the main image
+            if (!product.imgs.includes('Tote Bag/Sizes.jpg')) {
+                // insert as second image
+                product.imgs.splice(1, 0, 'Tote Bag/Sizes.jpg');
+            }
+        }
+
+        // thumbs
+        const thumbs = document.getElementById('thumbs');
+        thumbs.innerHTML = '';
+        product.imgs.forEach((src, i) => {
+            const img = document.createElement('img');
+            img.src = src;
+            if(i===0) img.classList.add('active');
+            img.addEventListener('click', () => {
+                document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active'));
+                img.classList.add('active');
+                main.src = src;
+            });
+            thumbs.appendChild(img);
+        });
+        
+        // Probe the product's image folder for additional view images.
+        // If a server-side generated `image-manifest.json` is present we'll read that first (fast and reliable).
+        // Otherwise fall back to a safe client-side probe of a short list of predictable filenames.
+        (function probeProductFolderForViews(){
+            try {
+                const first = product.imgs[0] || '';
+                if (!first || !first.includes('/')) return;
+
+                const folderName = first.split('/')[0]; // e.g. 'Tote Bag' or 'Riki Bag'
+
+                const thumbs = document.getElementById('thumbs');
+                const main = document.getElementById('mainImg');
+
+                const addThumb = (path, insertAtSecondForSizes=false) => {
+                    if (product.imgs.includes(path)) return;
+                    if (insertAtSecondForSizes) {
+                        product.imgs.splice(1, 0, path);
+                        const timg = document.createElement('img'); timg.src = path;
+                        timg.addEventListener('click', () => { document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active')); timg.classList.add('active'); main.src = path; });
+                        const firstThumb = thumbs.querySelector('img');
+                        if (firstThumb && firstThumb.nextSibling) thumbs.insertBefore(timg, firstThumb.nextSibling); else thumbs.appendChild(timg);
+                    } else {
+                        product.imgs.push(path);
+                        const timg = document.createElement('img'); timg.src = path;
+                        timg.addEventListener('click', () => { document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active')); timg.classList.add('active'); main.src = path; });
+                        thumbs.appendChild(timg);
+                    }
+                };
+
+                // try manifest first
+                fetch('image-manifest.json', {cache: 'no-store'}).then(r => {
+                    if (!r.ok) throw new Error('no-manifest');
+                    return r.json();
+                }).then(manifest => {
+                    const entries = manifest[folderName];
+                    if (Array.isArray(entries) && entries.length) {
+                        entries.forEach(name => {
+                            const path = folderName + '/' + name;
+                            if (name.toLowerCase() === 'sizes.jpg') addThumb(path, true);
+                            else addThumb(path, false);
+                        });
+                        return; // done using manifest
+                    }
+                    // no manifest entries for this folder -> fallback to probing
+                    runCandidateProbe(folderName);
+                }).catch(() => {
+                    // manifest absent or error -> probe
+                    runCandidateProbe(folderName);
+                });
+
+                // fallback probe (same safe candidate list as before)
+                function runCandidateProbe(folderName){
+                    const folder = folderName; // relative folder path like 'Riki Bag'
+                    const candidates = [
+                        'Sizes.jpg',
+                        'view1.jpg','view2.jpg','view3.jpg','view4.jpg','view5.jpg','view6.jpg',
+                        'View1.jpg','View2.jpg','View3.jpg','View4.jpg','View5.jpg','View6.jpg',
+                        'view1.png','view2.png','view3.png','view4.png','view5.png','view6.png',
+                        'View1.png','View2.png','View3.png','View4.png','View5.png','View6.png',
+                        '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg',
+                        '1.png','2.png','3.png','4.png','5.png','6.png',
+                        'Black.png','Colored.png','White.png','blue.png','red.png','Blue.png','Red.png'
+                    ];
+
+                    const imageExists = (url) => new Promise(resolve => {
+                        const img = new Image(); img.onload = () => resolve(true); img.onerror = () => resolve(false); img.src = url;
+                    });
+
+                    (async function run(){
+                        for (const candidate of candidates) {
+                            const path = folder + '/' + candidate;
+                            if (product.imgs.includes(path)) continue;
+                            // eslint-disable-next-line no-await-in-loop
+                            const exists = await imageExists(path);
+                            if (exists) {
+                                if (candidate.toLowerCase() === 'sizes.jpg') addThumb(path, true);
+                                else addThumb(path, false);
+                            }
+                        }
+                    })();
+                }
+
+            } catch (e) { /* ignore probe errors */ }
+        })();
+        
+
+        // clicking the main image opens zoom modal
+        main.style.cursor = 'zoom-in';
+        main.removeEventListener('click', onMainImgClick);
+        main.addEventListener('click', onMainImgClick);
+
+    // attrs / sizes
+    const attrs = document.getElementById('attributes');
+    attrs.innerHTML = '';
+
+    // sensible defaults per family
+    const vanityDefaults = ['₱400 - 14 x 14','₱430 - 14 x 16','₱450 - 16 x 19','₱470 - 16 x 21','₱500 - 17 x 25','₱550 - 20 x 24','₱650 - 21 x 28'];
+    const toteDefaults = ['₱35 - 8 x 10','₱45 - 10 x 12','₱50 - 13 x 15','₱55 - 14 x 16'];
+    const toteColoredDefaults = ['₱38 - 8 x 10','₱43 - 10 x 12','₱57 - 13 x 15','₱65 - 14 x 16'];
+    const ringlightDefaults = ['₱500 - 18 x 21','₱550 - 22 x 22'];
+
+    // helper: set selected size (used when list-based sizes are clicked)
+    function setSelectedSize(label, price, clickedLi){
+        // clear previous selection visuals
+        document.querySelectorAll('.attr ul li.size-option').forEach(n => n.classList.remove('selected'));
+        if (clickedLi) clickedLi.classList.add('selected');
+        // store globally so addToCart can see it
+        window._selectedSize = { label: label || null, price: (typeof price === 'number' ? Number(price) : (price ? Number(price) : null)) };
+        // update displayed price if price exists
+        if (window._selectedSize && window._selectedSize.price !== null) {
+            document.getElementById('productPrice').textContent = formatPrice(window._selectedSize.price);
+        }
+    }
+
+    // If this is a tote-family product, show two lists: White/Black and Colored
+    if (titleLower.includes('tote') || titleLower.includes('eco jute') || titleLower.includes('katsa')) {
+        // Prepare white/black sizes (prefer product.sizes if available)
+        const whiteSizes = (product.sizes && product.sizes.length)
+            ? product.sizes.map(s => {
+                const label = (s.label || s).toString().replace(/x/,' x ');
+                const price = (typeof s.price !== 'undefined') ? ('₱' + Number(s.price)) : null;
+                return price ? `${price} - ${label}` : label;
+            })
+            : toteDefaults;
+
+        const coloredSizes = toteColoredDefaults;
+
+        // render white/black list
+        const wrap1 = document.createElement('div'); wrap1.className = 'attr';
+        const hdr1 = document.createElement('div'); hdr1.style.fontWeight = '700'; hdr1.textContent = 'Available Sizes White and Black (inches):';
+        wrap1.appendChild(hdr1);
+        const ul1 = document.createElement('ul'); ul1.style.margin = '0.5rem 0 0 0.9rem'; ul1.style.padding = '0'; ul1.style.listStyle = 'disc';
+        whiteSizes.forEach(sz => {
+            const li = document.createElement('li');
+            li.className = 'size-option';
+            let label = sz;
+            let price = null;
+            if (sz.indexOf('-') !== -1) {
+                const parts = sz.split('-');
+                price = parts[0].replace(/[^0-9.]/g,'');
+                label = parts.slice(1).join('-').trim();
+                li.textContent = `${parts[0].trim()} - ${label}`;
+            } else {
+                label = sz;
+                li.textContent = sz + ' inches';
+            }
+            li.dataset.label = label;
+            if (price) li.dataset.price = price;
+            li.style.marginBottom = '0.25rem';
+            li.addEventListener('click', function(){ setSelectedSize(this.dataset.label, this.dataset.price ? Number(this.dataset.price) : null, this); });
+            ul1.appendChild(li);
+        });
+                // auto-select the first white size to show a price preview when available
+                (function autoSelectFirst(ul){
+                    const first = ul.querySelector('li.size-option');
+                    if (first && !window._selectedSize) {
+                        // trigger selection without firing a real click event
+                        setSelectedSize(first.dataset.label, first.dataset.price ? Number(first.dataset.price) : null, first);
+                    }
+                })(ul1);
+        wrap1.appendChild(ul1);
+        attrs.appendChild(wrap1);
+
+        // render colored list
+        const wrap2 = document.createElement('div'); wrap2.className = 'attr';
+        const hdr2 = document.createElement('div'); hdr2.style.fontWeight = '700'; hdr2.textContent = 'Available Sizes Colored (inches):';
+        wrap2.appendChild(hdr2);
+        const ul2 = document.createElement('ul'); ul2.style.margin = '0.5rem 0 0 0.9rem'; ul2.style.padding = '0'; ul2.style.listStyle = 'disc';
+        coloredSizes.forEach(sz => {
+            const li = document.createElement('li');
+            li.className = 'size-option';
+            let label = sz;
+            let price = null;
+            if (sz.indexOf('-') !== -1) {
+                const parts = sz.split('-');
+                price = parts[0].replace(/[^0-9.]/g,'');
+                label = parts.slice(1).join('-').trim();
+                li.textContent = `${parts[0].trim()} - ${label}`;
+            } else {
+                label = sz;
+                li.textContent = sz + ' inches';
+            }
+            li.dataset.label = label;
+            if (price) li.dataset.price = price;
+            li.style.marginBottom = '0.25rem';
+            li.addEventListener('click', function(){ setSelectedSize(this.dataset.label, this.dataset.price ? Number(this.dataset.price) : null, this); });
+            ul2.appendChild(li);
+        });
+        wrap2.appendChild(ul2);
+        attrs.appendChild(wrap2);
+                // do not auto-select colored sizes; leave white/black as primary preview
+
+    // If the title indicates vanity/mirror (but product.sizes may be absent), render vanity defaults
+    } else if (titleLower.includes('vanity') || titleLower.includes('mirror')) {
+        const sizes = vanityDefaults;
+        const wrap = document.createElement('div'); wrap.className = 'attr';
+        const hdr = document.createElement('div'); hdr.style.fontWeight = '700'; hdr.textContent = 'Available Sizes (inches):';
+        wrap.appendChild(hdr);
+        const ul = document.createElement('ul'); ul.style.margin = '0.5rem 0 0 0.9rem'; ul.style.padding = '0'; ul.style.listStyle = 'disc';
+        sizes.forEach(sz => {
+            const li = document.createElement('li');
+            li.className = 'size-option';
+            let label = sz;
+            let price = null;
+            if (sz.indexOf('-') !== -1) {
+                const parts = sz.split('-');
+                price = parts[0].replace(/[^0-9.]/g,'');
+                label = parts.slice(1).join('-').trim();
+                li.textContent = `${parts[0].trim()} - ${label}`;
+            } else {
+                label = sz;
+                li.textContent = sz + ' inches';
+            }
+            li.dataset.label = label;
+            if (price) li.dataset.price = price;
+            li.style.marginBottom = '0.25rem';
+            li.addEventListener('click', function(){ setSelectedSize(this.dataset.label, this.dataset.price ? Number(this.dataset.price) : null, this); });
+            ul.appendChild(li);
+        });
+        // auto-select first size to show a price preview
+        (function autoSelectFirst(ul){ const first = ul.querySelector('li.size-option'); if (first && !window._selectedSize) setSelectedSize(first.dataset.label, first.dataset.price ? Number(first.dataset.price) : null, first); })(ul);
+        wrap.appendChild(ul);
+        attrs.appendChild(wrap);
+
+    // If the title indicates a ringlight product (but product.sizes may be absent), render ringlight defaults
+    } else if (titleLower.includes('ring') || titleLower.includes('ringlight') || titleLower.includes('ring light')) {
+        const sizes = ringlightDefaults;
+        const wrap = document.createElement('div'); wrap.className = 'attr';
+        const hdr = document.createElement('div'); hdr.style.fontWeight = '700'; hdr.textContent = 'Available Sizes (Ringlight) (inches):';
+        wrap.appendChild(hdr);
+        const ul = document.createElement('ul'); ul.style.margin = '0.5rem 0 0 0.9rem'; ul.style.padding = '0'; ul.style.listStyle = 'disc';
+        sizes.forEach(sz => {
+            const li = document.createElement('li');
+            li.className = 'size-option';
+            let label = sz;
+            let price = null;
+            if (sz.indexOf('-') !== -1) {
+                const parts = sz.split('-');
+                price = parts[0].replace(/[^0-9.]/g,'');
+                label = parts.slice(1).join('-').trim();
+                li.textContent = `${parts[0].trim()} - ${label}`;
+            } else {
+                label = sz;
+                li.textContent = sz + ' inches';
+            }
+            li.dataset.label = label;
+            if (price) li.dataset.price = price;
+            li.style.marginBottom = '0.25rem';
+            li.addEventListener('click', function(){ setSelectedSize(this.dataset.label, this.dataset.price ? Number(this.dataset.price) : null, this); });
+            ul.appendChild(li);
+        });
+        (function autoSelectFirst(ul){ const first = ul.querySelector('li.size-option'); if (first && !window._selectedSize) setSelectedSize(first.dataset.label, first.dataset.price ? Number(first.dataset.price) : null, first); })(ul);
+        wrap.appendChild(ul);
+        attrs.appendChild(wrap);
+
+    // If the product provides a sizes array, render the same clickable list UI (vanity, mirror, ringlight, etc.)
+    } else if (product.sizes && product.sizes.length) {
+        const sizes = product.sizes.map(s => {
+            const label = (s.label || s).toString().replace(/x/,' x ');
+            const price = (typeof s.price !== 'undefined') ? ('₱' + Number(s.price)) : null;
+            return price ? `${price} - ${label}` : label;
+        });
+        const wrap = document.createElement('div'); wrap.className = 'attr';
+        const hdr = document.createElement('div'); hdr.style.fontWeight = '700';
+        hdr.textContent = titleLower.includes('ringlight') ? 'Available Sizes (Ringlight) (inches):' : 'Available Sizes (inches):';
+        wrap.appendChild(hdr);
+        const ul = document.createElement('ul'); ul.style.margin = '0.5rem 0 0 0.9rem'; ul.style.padding = '0'; ul.style.listStyle = 'disc';
+        sizes.forEach(sz => {
+            const li = document.createElement('li');
+            li.className = 'size-option';
+            let label = sz;
+            let price = null;
+            if (sz.indexOf('-') !== -1) {
+                const parts = sz.split('-');
+                price = parts[0].replace(/[^0-9.]/g,'');
+                label = parts.slice(1).join('-').trim();
+                li.textContent = `${parts[0].trim()} - ${label}`;
+            } else {
+                label = sz;
+                li.textContent = sz + ' inches';
+            }
+            li.dataset.label = label;
+            if (price) li.dataset.price = price;
+            li.style.marginBottom = '0.25rem';
+            li.addEventListener('click', function(){ setSelectedSize(this.dataset.label, this.dataset.price ? Number(this.dataset.price) : null, this); });
+            ul.appendChild(li);
+        });
+                // auto-select first size to show a price preview
+                (function autoSelectFirst(ul){
+                    const first = ul.querySelector('li.size-option');
+                    if (first && !window._selectedSize) {
+                        setSelectedSize(first.dataset.label, first.dataset.price ? Number(first.dataset.price) : null, first);
+                    }
+                })(ul);
+        wrap.appendChild(ul);
+        attrs.appendChild(wrap);
+
+    // No sizes information: show attributes
+    } else {
+        product.attrs.forEach(a => { const d = document.createElement('div'); d.className='attr'; d.textContent = a; attrs.appendChild(d); });
+    }
+    }
+
+    function onMainImgClick(e){
+        const src = e.currentTarget.src;
+        openImageModal(src);
+    }
+
+    function openImageModal(src){
+        const modal = document.getElementById('imgModal');
+        const img = document.getElementById('imgModalImg');
+        img.src = src;
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        // prevent scrolling
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageModal(){
+        const modal = document.getElementById('imgModal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    // close modal on ESC
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ closeImageModal(); } });
+
+    // Back behavior: try history.back(); fallback to `from` param mapping, then default to explore
+    function goBack(){
+        const from = qParam('from');
+        if(window.history.length > 1){
+            window.history.back();
+            setTimeout(()=>{
+                // if still on same page after back attempt, fallback
+                if(document.visibilityState === 'visible'){
+                    fallbackToFrom(from);
+                }
+            }, 250);
+        } else {
+            fallbackToFrom(from);
+        }
+    }
+
+    function fallbackToFrom(from){
+        const map = { profile: 'profile.html', explore: 'explore.html', saved: 'saved.html', cart: 'cart.html' };
+        if(from && map[from]) window.location.href = map[from];
+        else window.location.href = 'explore.html';
+    }
+
+    document.getElementById('backBtn').addEventListener('click', goBack);
+
+    // Initialize page based on id param or slug
+    document.addEventListener('DOMContentLoaded', function(){
+        const id = qParam('id');
+        const slug = qParam('slug');
+        let product = null;
+        if(id){ product = PRODUCTS.find(p => p.id === id); }
+        if(!product && slug){ product = PRODUCTS.find(p => p.slug === slug); }
+        // Fallback: allow view links to pass title/price/img/desc via query params
+        if(!product){
+            const qTitle = qParam('title');
+            const qPrice = qParam('price');
+            const qImg = qParam('img');
+            const qDesc = qParam('desc');
+            const qAttrs = qParam('attrs');
+            // normalize image path from query param: handle double-encoding and percent encodings
+            function normalizeImgPath(raw){
+                if(!raw) return '';
+                try {
+                    // If raw is an absolute URL, extract pathname to get a site-relative path
+                    let url;
+                    try { url = new URL(raw, window.location.href); } catch(e) { url = null; }
+                    let path = raw;
+                    if (url && (url.protocol === 'http:' || url.protocol === 'https:' || raw.startsWith('/'))) {
+                        path = url.pathname || raw;
+                    }
+                    // decode percent-encodings (try twice for double-encoded values)
+                    let s = decodeURIComponent(path);
+                    if (s.indexOf('%') !== -1) {
+                        try { s = decodeURIComponent(s); } catch(e) { /* ignore */ }
+                    }
+                    // strip leading slash if present and convert %20 to spaces
+                    s = s.replace(/^\//, '').replace(/%20/g, ' ').trim();
+                    return s;
+                } catch(e){
+                    return raw;
+                }
+            }
+
+            if(qTitle){
+                const imgVal = qImg ? normalizeImgPath(qImg) : '';
+                product = {
+                    id: 'p-' + Date.now(),
+                    slug: qTitle.toLowerCase().replace(/[^a-z0-9]+/g,'-'),
+                    title: decodeURIComponent(qTitle),
+                    price: qPrice ? parseFloat(qPrice) : 0,
+                    imgs: imgVal ? [imgVal] : ['totebag.avif'],
+                    desc: qDesc ? decodeURIComponent(qDesc) : '',
+                    attrs: qAttrs ? decodeURIComponent(qAttrs).split('|') : []
+                };
+            }
+        }
+        if(!product){ product = PRODUCTS[0]; }
+        populate(product);
+
+        // Breadcrumb showing source
+        const from = qParam('from');
+        const breadcrumb = document.getElementById('breadcrumb');
+        if(from){ breadcrumb.textContent = 'From: ' + from.charAt(0).toUpperCase()+from.slice(1); }
+
+        // Wire add to cart (simple localStorage demo)
+        // Add to cart: store in `cart` (used by cart.js). Store name, price, image and quantity.
+        document.getElementById('addToCart').addEventListener('click', function(){
+            try {
+                const stored = JSON.parse(localStorage.getItem('cart') || '[]');
+                const mainImgEl = document.getElementById('mainImg');
+                const imgSrc = mainImgEl.getAttribute('src') || mainImgEl.src || '';
+                // determine selected size price if applicable
+                const sizeSelectEl = document.getElementById('sizeSelect');
+                let selectedSizeLabel = null;
+                let selectedPrice = null;
+                if (sizeSelectEl) {
+                    selectedPrice = Number(sizeSelectEl.value) || 0;
+                    selectedSizeLabel = sizeSelectEl.options[sizeSelectEl.selectedIndex] && sizeSelectEl.options[sizeSelectEl.selectedIndex].dataset.label;
+                }
+                // If no select is present, check for a clicked size (setSelectedSize stores this on window._selectedSize)
+                if (!sizeSelectEl && window._selectedSize) {
+                    selectedPrice = (typeof window._selectedSize.price === 'number') ? window._selectedSize.price : null;
+                    selectedSizeLabel = window._selectedSize.label || null;
+                }
+
+                const item = {
+                    name: product.title,
+                    price: (selectedPrice !== null ? selectedPrice : product.price),
+                    size: selectedSizeLabel || null,
+                    image: imgSrc,
+                    quantity: 1,
+                    selected: false
+                };
+
+                // Try to merge with existing same-name & image item
+                const idx = stored.findIndex(i => i.name === item.name && i.image === item.image);
+                if (idx > -1) {
+                    stored[idx].quantity = (stored[idx].quantity || 0) + 1;
+                } else {
+                    stored.push(item);
+                }
+                localStorage.setItem('cart', JSON.stringify(stored));
+                // update the header badge (preferred global helper)
+                if (window.updateNavBadge) window.updateNavBadge();
+                else if (typeof updateCartBadge === 'function') updateCartBadge();
+                if(typeof showNotification === 'function') showNotification('Added to cart', 'success');
+            } catch (e) {
+                console.error('Add to cart failed', e);
+            }
+        });
+
+        // Save item: store product title in `savedBags` (used by saved.js)
+        document.getElementById('saveItem').addEventListener('click', function(){
+            try {
+                const saved = JSON.parse(localStorage.getItem('savedBags') || '[]');
+                const mainImgEl = document.getElementById('mainImg');
+                const imgSrc = mainImgEl ? (mainImgEl.getAttribute('src') || mainImgEl.src || '') : '';
+                // when saving from the view page include selected size/price if present
+                const sizeSelectEl2 = document.getElementById('sizeSelect');
+                let savedPrice = product.price;
+                let savedSizeLabel = null;
+                if (sizeSelectEl2) {
+                    savedPrice = Number(sizeSelectEl2.value) || product.price;
+                    savedSizeLabel = sizeSelectEl2.options[sizeSelectEl2.selectedIndex] && sizeSelectEl2.options[sizeSelectEl2.selectedIndex].dataset.label;
+                }
+                const itemObj = { name: product.title, price: savedPrice, image: imgSrc, size: savedSizeLabel };
+
+                const exists = saved.some(s => (typeof s === 'string' && s === itemObj.name) || (s && s.name === itemObj.name));
+                if (!exists) saved.unshift(itemObj);
+                localStorage.setItem('savedBags', JSON.stringify(saved));
+                if(typeof showNotification === 'function') showNotification('Saved item', 'info');
+                // update saved count UI if present
+                const savedCountEl = document.getElementById('savedCount');
+                if (savedCountEl) savedCountEl.textContent = `${saved.length} Saved Item${saved.length !== 1 ? 's' : ''}`;
+            } catch (e) { console.error('Save item failed', e); }
+        });
+
+        // ensure badge reflects current cart state on page load
+        if (window.updateNavBadge) window.updateNavBadge();
+    });
+</script>
+</body>
+</html>
