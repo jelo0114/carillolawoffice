@@ -534,7 +534,7 @@ function checkout() {
     showNotification('Preparing receipt...', 'success');
     // open receipt page immediately
     setTimeout(() => {
-        window.location.href = 'receipt.html';
+        window.location.href = 'receipt.js';
     }, 400);
 }
 
