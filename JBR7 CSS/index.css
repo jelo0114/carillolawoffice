@@ -208,6 +208,42 @@ nav a:hover {
     .footer-content { flex-direction: column; gap: 30px; text-align: center; }
 }
 
+/* ------------------ THEME & DISPLAY OVERRIDES ------------------ */
+/* Dark theme and compact view support */
+
+/* default (light) values - kept minimal so existing styles remain unchanged */
+:root {
+    --bg-color: #fae3e3;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --muted-color: #666666;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0f1720;
+    --text-color: #e6eef2;
+    --card-bg: #07121a;
+    --muted-color: #9aa6b2;
+}
+
+/* apply a couple of high-level overrides when dark theme active */
+[data-theme="dark"] body { background-color: var(--bg-color); color: var(--text-color); }
+[data-theme="dark"] header { background: rgba(7,18,26,0.6); }
+[data-theme="dark"] .settings-card, [data-theme="dark"] .hero, [data-theme="dark"] footer { background-color: var(--card-bg); color: var(--text-color); border-color: rgba(255,255,255,0.03); }
+[data-theme="dark"] nav a { color: var(--text-color); }
+[data-theme="dark"] .toggle-info p, [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group select { color: var(--muted-color); }
+
+/* Compact view - reduce spacing and shrink some elements */
+body.compact .settings-card, body.compact .hero, body.compact .feature-item {
+    padding: 0.6rem !important;
+}
+
+body.compact .logo-img { width: 40px; height: 40px; }
+body.compact .hero-images img { width: 180px; }
+body.compact .feature-item { max-width: 160px; }
+
+/* end theme/display overrides */
+
 /* --- FOOTER STYLES --- */
 footer {
     background-color: #30678a;

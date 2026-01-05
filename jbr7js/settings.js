@@ -126,13 +126,44 @@ function setDefaultAddress() {
 
 // Preference Functions
 function changeTheme(theme) {
+    // persist selection
+    localStorage.setItem('jbr7_theme', theme);
+    applyTheme(theme);
     showNotification(`Theme changed to ${theme}`, 'success');
-    // You could actually implement theme switching here
 }
 
 function toggleCompactView(checkbox) {
-    const status = checkbox.checked ? 'enabled' : 'disabled';
+    const enabled = !!checkbox.checked;
+    if (enabled) document.body.classList.add('compact'); else document.body.classList.remove('compact');
+    localStorage.setItem('jbr7_compact', enabled ? '1' : '0');
+    const status = enabled ? 'enabled' : 'disabled';
     showNotification(`Compact view ${status}`, 'info');
+}
+
+// Apply theme immediately. Supports 'light', 'dark', 'auto'
+function applyTheme(theme) {
+    const root = document.documentElement;
+    function setFor(t) {
+        root.setAttribute('data-theme', t);
+    }
+
+    if (theme === 'auto') {
+        const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        const isDark = mq ? mq.matches : false;
+        setFor(isDark ? 'dark' : 'light');
+
+        // listen to changes when 'auto' is selected
+        if (mq && mq.addEventListener) {
+            mq.addEventListener('change', e => setFor(e.matches ? 'dark' : 'light'));
+        } else if (mq && mq.addListener) {
+            mq.addListener(e => setFor(e.matches ? 'dark' : 'light'));
+        }
+    } else if (theme === 'dark' || theme === 'light') {
+        setFor(theme);
+    } else {
+        // fallback
+        setFor('light');
+    }
 }
 
 function setDefaultSort(sortValue) {
@@ -268,4 +299,20 @@ document.addEventListener('DOMContentLoaded', function() {
     showSettingsSection('account');
     // Load saved preferences
     try { loadDefaultPayment(); } catch (e) { /* ignore if section not present on page */ }
+    // Load theme and compact view preferences
+    try {
+        const savedTheme = localStorage.getItem('jbr7_theme') || 'light';
+        applyTheme(savedTheme);
+        // set select value if present
+        const themeSelect = document.querySelector('select[onchange="changeTheme(this.value)"]');
+        if (themeSelect) themeSelect.value = savedTheme;
+
+        const savedCompact = localStorage.getItem('jbr7_compact');
+        const compactCheckbox = document.querySelector('input[onchange="toggleCompactView(this)"]');
+        if (compactCheckbox) {
+            const enabled = savedCompact === '1';
+            compactCheckbox.checked = enabled;
+            if (enabled) document.body.classList.add('compact');
+        }
+    } catch (e) { /* ignore if elements not present */ }
 });
