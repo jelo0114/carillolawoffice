@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - JBR7 Bags Manufacturing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="home.css">
-    <link rel="stylesheet" href="JBR7 CSS/contact.css">
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/JBR7 CSS/contact.css">
 </head>
 <body>
 
     <header>
-        <a href="home.html" class="logo">
+    <a href="/contact.html" class="logo">
             <img src="JBR7 BAGS LOGO.jpg" alt="JBR7 Bags" class="logo-img" onerror="this.style.display='none'">
             <div class="logo-text">
                 <h2><span>JBR7</span> BAGS</h2>
@@ -219,7 +219,6 @@
                         <h3 class="support-title">Email Support</h3>
                             <p class="support-detail">roquejennylynbatac@gmail.com</p>
                             <p class="support-info">Response within 24 hours</p>
-                        <button class="support-btn">Send Email</button>
                     </div>
 
                     <div class="contact-support-card">
@@ -229,7 +228,6 @@
                         <h3 class="support-title">Phone Support</h3>
                         <p class="support-detail">09216821649</p>
                         <p class="support-info">Mon-Fri: 9AM - 6PM</p>
-                        <button class="support-btn">Call Now</button>
                     </div>
 
                     <div class="contact-support-card">
@@ -239,7 +237,7 @@
                         <h3 class="support-title">Live Chat</h3>
                         <p class="support-detail">Instant messaging</p>
                         <p class="support-info">Average response: 5 minutes</p>
-                        <button class="support-btn">Start Chat</button>
+                        <button class="support-btn" onclick="startLiveChat()">Start Chat</button>
                     </div>
 
                     <div class="contact-support-card">
@@ -249,7 +247,7 @@
                         <h3 class="support-title">Visit Us</h3>
                         <p class="support-detail">059 Purok 1, Culianin, Plaridel, Bulacan</p>
                         <p class="support-info">By appointment only</p>
-                        <button class="support-btn">Get Directions</button>
+                        <button class="support-btn" onclick="getDirections()">Get Directions</button>
                     </div>
                 </div>
 
@@ -262,7 +260,7 @@
                             <p>Connect with our customer service team right now</p>
                         </div>
                     </div>
-                    <button class="customer-service-btn" onclick="openCustomerService()">
+                    <button class="customer-service-btn" onclick="openCustomerServiceChat()">
                         <i class="fas fa-user-headset"></i>
                         Customer Service
                     </button>
@@ -271,12 +269,74 @@
 
             <!-- Quick Links Section -->
             <div class="contact-quick-links">
-                <h3 class="quick-links-title">Quick Links</h3>
+                <div class="quick-links-header">
+                    <h3 class="quick-links-title">
+                        <i class="fas fa-link"></i>
+                        Quick Links
+                    </h3>
+                    <p class="quick-links-subtitle">Access important pages and information quickly</p>
+                </div>
                 <div class="quick-links-grid">
-                    <a href="#about" class="quick-link-item">About Us</a>
-                    <a href="#privacy" class="quick-link-item">Privacy Policy</a>
-                    <a href="#terms" class="quick-link-item">Terms of Service</a>
-                    <a href="#warranty" class="quick-link-item">Warranty Information</a>
+                    <a href="/about.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>About Us</h4>
+                            <p>Learn about JBR7 Bags</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
+                    <a href="/privacy-policy.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Privacy Policy</h4>
+                            <p>How we protect your data</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
+                    <a href="/terms-of-service.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Terms of Service</h4>
+                            <p>Our terms and conditions</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
+                    <a href="/warranty.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Warranty Information</h4>
+                            <p>Product warranty details</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
+                    <a href="/explore.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Browse Products</h4>
+                            <p>Explore our collection</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
+                    <a href="/saved.html" class="quick-link-item">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Saved Items</h4>
+                            <p>View your favorites</p>
+                        </div>
+                        <i class="fas fa-chevron-right quick-link-arrow"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -314,8 +374,8 @@
     </footer>
     
 
-    <script src="jbr7js/home.js"></script>
-    <script src="jbr7js/contact.js"></script>
-    <script src="jbr7js/notifications.js"></script>
+    <script src="/jbr7js/home.js"></script>
+    <script src="/jbr7js/contact.js"></script>
+    <script src="/jbr7js/notifications.js"></script>
 </body>
 </html>

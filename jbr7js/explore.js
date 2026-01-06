@@ -49,37 +49,92 @@ function filterProducts() {
     });
 }
 
+// Helper function to get price from card (from data-price or displayed price)
+function getCardPrice(card) {
+    let price = card.getAttribute('data-price');
+    if (!price || isNaN(parseFloat(price))) {
+        // Try to extract from displayed price
+        const priceEl = card.querySelector('.price');
+        if (priceEl) {
+            price = priceEl.textContent.replace(/[^0-9\.]/g, '');
+            if (price && !isNaN(parseFloat(price))) {
+                card.setAttribute('data-price', price);
+                return parseFloat(price);
+            }
+        }
+        return 0;
+    }
+    return parseFloat(price);
+}
+
+// Helper function to get rating from card
+function getCardRating(card) {
+    const rating = card.getAttribute('data-rating');
+    if (!rating || isNaN(parseFloat(rating))) {
+        // Try to extract from displayed rating
+        const ratingEl = card.querySelector('.rating-number');
+        if (ratingEl) {
+            const ratingVal = parseFloat(ratingEl.textContent);
+            if (!isNaN(ratingVal)) {
+                card.setAttribute('data-rating', ratingVal.toString());
+                return ratingVal;
+            }
+        }
+        return 0;
+    }
+    return parseFloat(rating);
+}
+
+// Helper function to get date from card
+function getCardDate(card) {
+    const dateStr = card.getAttribute('data-date');
+    if (!dateStr) {
+        // Default to today if no date
+        const today = new Date();
+        card.setAttribute('data-date', today.toISOString().split('T')[0]);
+        return today;
+    }
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? new Date(0) : date;
+}
+
 // Sort products
 function sortProducts() {
     const sortValue = document.getElementById('sortFilter').value;
     const productsGrid = document.getElementById('productsGrid');
     const productCards = Array.from(document.querySelectorAll('.product-card'));
     
+    // Store original order for "featured" option
+    if (!productsGrid.originalOrder) {
+        productsGrid.originalOrder = [...productCards];
+    }
+    
     let sortedCards = [...productCards];
     
     switch(sortValue) {
         case 'price-low':
             sortedCards.sort((a, b) => {
-                return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                return getCardPrice(a) - getCardPrice(b);
             });
             break;
         case 'price-high':
             sortedCards.sort((a, b) => {
-                return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+                return getCardPrice(b) - getCardPrice(a);
             });
             break;
         case 'rating':
             sortedCards.sort((a, b) => {
-                return parseFloat(b.getAttribute('data-rating')) - parseFloat(a.getAttribute('data-rating'));
+                return getCardRating(b) - getCardRating(a);
             });
             break;
         case 'newest':
             sortedCards.sort((a, b) => {
-                return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                return getCardDate(b) - getCardDate(a);
             });
             break;
         default:
-            // Featured - original order
+            // Featured - restore original order
+            sortedCards = [...productsGrid.originalOrder];
             break;
     }
     
@@ -117,6 +172,30 @@ function toggleSave(button) {
             savedItems.push({ name: productName, price: productPrice, image: productImage });
             localStorage.setItem('savedBags', JSON.stringify(savedItems));
         }
+
+
+        
+
+        // Try server save for authenticated users. If not authenticated, server returns 401 and we silently keep localStorage.
+        try {
+            const payload = { title: productName, image: productImage, price: productPrice };
+            fetch('/jbr7php/save_item.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if (res.status === 401) {
+                    // not authenticated; nothing to do (localStorage used)
+                    return;
+                }
+                return res.json();
+            }).then(json => {
+                // If needed, could update UI based on server response
+            }).catch(e => {
+                console.warn('Server save failed', e);
+            });
+        } catch (e) { console.warn('Save request failed', e); }
     } else {
         showNotification(`${productName} removed from saved items`, 'info');
 
@@ -128,6 +207,22 @@ function toggleSave(button) {
             return true;
         });
         localStorage.setItem('savedBags', JSON.stringify(savedItems));
+
+        // Try server-side removal
+        try {
+            const payload = { title: productName };
+            fetch('/jbr7php/delete_saved_item.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if (res.status === 401) return; // not authenticated
+                return res.json();
+            }).then(json => {
+                // optionally update UI
+            }).catch(e => console.warn('Server remove failed', e));
+        } catch (e) { console.warn('Remove request failed', e); }
     }
 }
 
@@ -225,8 +320,45 @@ function loadSavedStates() {
     });
 }
 
+// Initialize data attributes from displayed values
+function initializeDataAttributes() {
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        // Initialize data-price from displayed price if missing
+        if (!card.getAttribute('data-price') || isNaN(parseFloat(card.getAttribute('data-price')))) {
+            const priceEl = card.querySelector('.price');
+            if (priceEl) {
+                const price = priceEl.textContent.replace(/[^0-9\.]/g, '');
+                if (price && !isNaN(parseFloat(price))) {
+                    card.setAttribute('data-price', price);
+                }
+            }
+        }
+        
+        // Initialize data-rating from displayed rating if missing
+        if (!card.getAttribute('data-rating') || isNaN(parseFloat(card.getAttribute('data-rating')))) {
+            const ratingEl = card.querySelector('.rating-number');
+            if (ratingEl) {
+                const rating = parseFloat(ratingEl.textContent);
+                if (!isNaN(rating)) {
+                    card.setAttribute('data-rating', rating.toString());
+                }
+            }
+        }
+        
+        // Initialize data-date if missing (default to today)
+        if (!card.getAttribute('data-date')) {
+            const today = new Date();
+            card.setAttribute('data-date', today.toISOString().split('T')[0]);
+        }
+    });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize data attributes first
+    initializeDataAttributes();
+    
     // Load centralized prices (if available) and then restore saved states
     loadPrices().then(() => {
         loadSavedStates();
@@ -271,11 +403,37 @@ async function loadPrices() {
                 const priceSpan = card.querySelector('.price');
                 if (priceSpan) priceSpan.textContent = `₱${Number(entry.retail).toFixed(2)}`;
                 card.setAttribute('data-price', String(Number(entry.retail)));
+            } else {
+                // Ensure data-price is set even if not in prices.json
+                const currentPrice = card.getAttribute('data-price');
+                if (!currentPrice || isNaN(parseFloat(currentPrice))) {
+                    const priceEl = card.querySelector('.price');
+                    if (priceEl) {
+                        const price = priceEl.textContent.replace(/[^0-9\.]/g, '');
+                        if (price && !isNaN(parseFloat(price))) {
+                            card.setAttribute('data-price', price);
+                        }
+                    }
+                }
             }
         });
 
     } catch (e) {
         // silent failure is OK — prices.json optional
+        // Ensure all cards have data-price set from displayed prices
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            const currentPrice = card.getAttribute('data-price');
+            if (!currentPrice || isNaN(parseFloat(currentPrice))) {
+                const priceEl = card.querySelector('.price');
+                if (priceEl) {
+                    const price = priceEl.textContent.replace(/[^0-9\.]/g, '');
+                    if (price && !isNaN(parseFloat(price))) {
+                        card.setAttribute('data-price', price);
+                    }
+                }
+            }
+        });
         console.warn('prices.json load failed:', e.message || e);
         throw e;
     }
