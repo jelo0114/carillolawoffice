@@ -25,24 +25,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $db = Database::getInstance();
         
         // Prepare and execute the query
-        $query = "SELECT admin_id, username, password FROM admins WHERE username = ?";
-        $stmt = $db->prepareAndExecute($query, "s", [$username]);
+        $query = "SELECT * FROM admins WHERE username = ? AND password = ?";
+        $stmt = $db->prepareAndExecute($query, "ss", [$username, $password]);
         
         if ($stmt) {
             $result = $stmt->get_result();
             
             if ($result->num_rows === 1) {
-                $admin = $result->fetch_assoc();
-                if ($password === $admin['password']) {
-                    $_SESSION['admin_logged_in'] = true;
-                    $_SESSION['admin_id'] = $admin['admin_id'];
-                    header("Location: admin-home.php");
-                    exit();
-                } else {
-                    $_SESSION['error'] = "Invalid password.";
-                }
+                $_SESSION['admin_logged_in'] = true;
+                header("Location: admin-home.php");
+                exit();
             } else {
-                $_SESSION['error'] = "Invalid username.";
+                $_SESSION['error'] = "Invalid login credentials.";
+                header("Location: login.php");
+                exit();
             }
             
             $stmt->close();

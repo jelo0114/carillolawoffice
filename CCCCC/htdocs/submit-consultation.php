@@ -1,6 +1,5 @@
 <?php
 session_start();
-date_default_timezone_set('Asia/Manila');
 require_once 'config/database.php';
 
 // Check if the form was submitted
@@ -16,18 +15,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Convert preferred_date to the correct format for DATETIME ("YYYY-MM-DD HH:MM:SS")
         $preferred_date = str_replace('T', ' ', $preferred_date) . ':00';
-        $selected_dt = new DateTime($preferred_date, new DateTimeZone('Asia/Manila'));
+        $selected_dt = new DateTime($preferred_date);
 
         // Calculate 2-hour window
         $start_time = $selected_dt->modify('-2 hours')->format('Y-m-d H:i:s');
         $end_time = $selected_dt->modify('+4 hours')->format('Y-m-d H:i:s'); // 2 hours back + 2 forward = 4
 
-        // Check for conflicts - only consider pending and completed appointments
-        $conflict_sql = "SELECT COUNT(*) as conflict_count, 
-                        GROUP_CONCAT(CONCAT(full_name, ' at ', TIME_FORMAT(preferred_date, '%h:%i %p')) SEPARATOR '; ') as conflicting_appointments
+        // Check for conflicts
+        $conflict_sql = "SELECT COUNT(*) as conflict_count 
                         FROM consultations 
-                        WHERE preferred_date BETWEEN ? AND ? 
-                        AND status IN ('pending', 'completed')";
+                        WHERE preferred_date BETWEEN ? AND ?";
 
         $db = Database::getInstance();
         $conn = $db->getConnection();
@@ -39,13 +36,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conflict_row = $conflict_result->fetch_assoc();
 
         if ($conflict_row['conflict_count'] > 0) {
-            $_SESSION['error_message'] = "The selected time overlaps with another consultation. Conflicting appointments: " . $conflict_row['conflicting_appointments'];
+            $_SESSION['error_message'] = "The selected time overlaps with another consultation. Please choose a different time.";
             header("Location: consultation.php");
             exit();
         }
 
         // Get user ID if logged in, otherwise set to NULL
         $uid = isset($_SESSION['client_logged_in']) && isset($_SESSION['client_id']) ? $_SESSION['client_id'] : NULL;
+
+        // Get database instance
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
 
         // Prepare SQL statement
         $sql = "INSERT INTO consultations (uid, full_name, email, phone, legal_issue, preferred_date, message) 

@@ -31,19 +31,4 @@ CREATE TABLE IF NOT EXISTS admins (
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create consultations table
-CREATE TABLE IF NOT EXISTS consultations (
-    consultation_id INT AUTO_INCREMENT PRIMARY KEY,
-    uid INT,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    legal_issue VARCHAR(100) NOT NULL,
-    preferred_date DATETIME NOT NULL,
-    message TEXT,
-    status ENUM('pending','completed','cancelled','rejected') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (uid) REFERENCES users(uid) ON DELETE SET NULL
 ); 
