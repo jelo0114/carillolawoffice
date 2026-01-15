@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultations</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="upperbar">
+        <div class="topbar">
+            <span>[📞 0973 727 8473]</span>
+            <span><a href="mailto:pcvcarillolaw@gmail.com" class="email-link">[ <i class="fas fa-envelope"></i> pcvcarillolaw@gmail.com]</a></span>
+        </div>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html"><img src="src/web_logo-removebg-preview.png" alt="Carillo Law Office"></a>
+                <span><a href="index.html" class="webname">CARILLO LAW</a></span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="services.html">SERVICES</a></li>
+                <li><a href="#">CONTACTS</a></li>
+                <li><a href="#">TESTIMONIALS</a></li>
+                <li><a href="#">APPOINTMENTS</a></li>
+                <li>
+                    <!-- Login button (default) -->
+                    <a href="client-login.html" class="login-btn" id="loginButton" style="color:#0f3f41;">Login</a>
+                    
+                    <!-- User dropdown (shown when logged in) -->
+                    <div class="user-dropdown" id="userDropdown" style="display: none;">
+                        <a href="profile.html" class="user-nav" style="color:#FFD700; font-weight:bold; display:flex; align-items:center; gap:6px; text-decoration:none; text-transform:none;">
+                            <i class="fas fa-user-circle" style="font-size: 20px;"></i>
+                            <span id="navUserName">User</span>
+                        </a>
+                        <div class="user-dropdown-content">
+                            <a href="account-settings.html" class="dropdown-btn"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="logout.html" class="dropdown-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- HERO BANNER -->
+    <section class="consul-hero">
+        <div class="consul-hero-content">
+            <div class="consul-hero-text">
+                <h1>Legal Solutions with Integrity & Expertise</h1>
+                <p>Professional legal and notarial services, committed to protecting your rights.</p>
+                <p2>JUSTICE • EQUALITY • TRUTH</p2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consultation Booking Section -->
+    <div class="consultation-container">
+        <h1>Book a Legal Consultation</h1>
+        <p class="subtext">Fill out the form below and our legal team will contact you to confirm your appointment.</p>
+
+        <!-- Messages will be displayed here -->
+        <div id="messageContainer"></div>
+
+        <form action="submit-consultation.html" method="POST" class="consultation-form" id="consultationForm">
+            <label for="full_name">Full Name</label>
+            <input type="text" id="full_name" name="full_name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="legal_issue">Type of Legal Concern</label>
+            <select id="legal_issue" name="legal_issue" required>
+                <option value="">-- Please Select --</option>
+                <option value="Family Law">Family Law</option>
+                <option value="Criminal Law">Criminal Law</option>
+                <option value="Property Law">Property Law</option>
+                <option value="Contracts">Contracts</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Labor and Employment">Labor and Employment</option>
+                <option value="Business or Corporate">Business or Corporate</option>
+                <option value="Estate and Inheritance">Estate and Inheritance</option>
+                <option value="Civil Litigation">Court Representation(Civil, Criminal, Administrative)</option>
+                <option value="Notarial Services">Notarial Services</option>
+            </select>
+
+            <label for="preferred_date">Preferred Date</label>
+            <input type="datetime-local" name="preferred_date" id="preferred_date" required>
+
+            <label for="message">Brief Description</label>
+            <textarea id="message" name="message" rows="4" placeholder="Tell us a bit about your legal concern..." required></textarea>
+
+            <button type="submit" class="submit-btn">Submit Consultation Request</button>
+        </form>
+
+        <p class="confidential-note">All information submitted is kept strictly confidential and used only for appointment scheduling.</p>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>Carillo Law Office</h3>
+                <p>Providing trusted legal and notarial services in civil, real estate, and contract law for over 5 years.</p>
+            </div>
+            <div class="footer-section contact">
+                <h4>Contact Us</h4>
+                <p>📍 9017 C.P. Trinidad St., Concepcion, Baliuag, Philippines</p>
+                <p>📞 0973 727 8473</p>
+                <p><a href="mailto:pcvcarillolaw@gmail.com" class="email-link"><i class="fas fa-envelope"></i> pcvcarillolaw@gmail.com</a></p>
+                <p>
+                    <a href="https://www.facebook.com/profile.php?id=100083055586233" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="facebook-link">
+                        <i class="fab fa-facebook-square" style="margin-right: 5px;"></i> Facebook
+                    </a>
+                </p>
+            </div>
+            <div class="footer-section hours">
+                <h4>Office Hours</h4>
+                <p>Mon – Fri: 9:00 AM – 6:00 PM</p>
+                <p>Sat: 8:00 AM – 5:00 PM</p>
+                <p>Sun & Holidays: Closed</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Carillo Law Office. All rights reserved.</p>
+            <p>All legal services comply with Philippine law. This website is for informational purposes only and does not constitute legal advice.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check if user is logged in and populate form
+        function checkUserSession() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const firstName = localStorage.getItem('userFirstName') || '';
+            const lastName = localStorage.getItem('userLastName') || '';
+            const email = localStorage.getItem('userEmail') || '';
+            const mobile = localStorage.getItem('userMobile') || '';
+
+            if (isLoggedIn) {
+                // Show user dropdown, hide login button
+                document.getElementById('loginButton').style.display = 'none';
+                document.getElementById('userDropdown').style.display = 'block';
+                document.getElementById('navUserName').textContent = firstName;
+
+                // Pre-fill form fields
+                document.getElementById('full_name').value = `${firstName} ${lastName}`;
+                document.getElementById('email').value = email;
+                document.getElementById('phone').value = mobile;
+            }
+        }
+
+        // Set minimum date/time to current date/time
+        function setMinDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            document.getElementById('preferred_date').min = minDateTime;
+        }
+
+        // Handle form submission
+        document.getElementById('consultationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In production, this would submit to backend
+            // For now, we'll simulate success
+            const formData = new FormData(this);
+            
+            // Show success message
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '<div class="alert alert-success">Your consultation request has been submitted successfully. We will contact you shortly.</div>';
+            
+            // Scroll to message
+            messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Reset form
+            this.reset();
+            setMinDateTime();
+        });
+
+        // Check for messages in URL parameters (from backend redirect)
+        function checkMessages() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            const messageContainer = document.getElementById('messageContainer');
+            
+            if (success) {
+                messageContainer.innerHTML = '<div class="alert alert-success">Your consultation request has been submitted successfully. We will contact you shortly.</div>';
+            } else if (error) {
+                messageContainer.innerHTML = '<div class="alert alert-error">The selected time overlaps with another consultation. Please choose a different time.</div>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserSession();
+            setMinDateTime();
+            checkMessages();
+        });
+    </script>
+</body>
+</html>

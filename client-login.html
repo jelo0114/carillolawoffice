@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login / Sign Up - Carillo Law</title>
+    <link rel="stylesheet" href="client-login.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <a href="index.html" class="back-home-btn"><i class="fas fa-home"></i> Back to Home</a>
+    
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+        <div class="circle circle1"></div>
+        <div class="circle circle2"></div>
+        <div class="circle circle3"></div>
+    </div>
+
+    <div class="container">
+        <div class="toggle-buttons">
+            <button id="loginBtn" class="active">Login</button>
+            <button id="signupBtn">Sign Up</button>
+        </div>
+        <div class="form-container" id="formContainer">
+
+            <!-- Login Form -->
+            <div class="form-box" id="loginForm">
+                <h2>Login</h2>
+                <form id="loginFormElement">
+                    <input type="text" name="login_id" placeholder="Username or Email" required />
+                    <div class="password-wrapper">
+                        <input type="password" name="login_password" placeholder="Password" id="loginPassword" required />
+                        <img src="https://cdn-icons-png.flaticon.com/512/565/565655.png" alt="Show" id="toggleLoginPassword" />
+                    </div>
+                    <div class="remember-forget">
+                        <label class="custom-checkbox">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Remember Me
+                        </label>
+                        <a href="#">Forget Password</a>
+                    </div>
+                    <div class="g-recaptcha" data-sitekey="6LdjTTIrAAAAAFMFYvoIHK4X3cZ6Y-Ja52ncrRG0"></div>
+                    <button type="submit">Login</button>
+                    <div id="loginMessages"></div>
+                </form>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="form-box" id="signupForm">
+                <h2>Sign Up</h2>
+                <form id="signupFormElement">
+                    <input type="text" name="username" placeholder="Username" required />
+                    <input type="text" name="first_name" placeholder="First Name" required />
+                    <input type="text" name="last_name" placeholder="Last Name" required />
+                    <input type="email" name="email" placeholder="Email" required />
+                    <input type="tel" name="contact_number" placeholder="Mobile Number" required />
+
+                    <div class="password-wrapper">
+                        <input type="password" name="password" placeholder="Password" id="signupPassword" required />
+                        <img src="https://cdn-icons-png.flaticon.com/512/565/565655.png" alt="Show" id="toggleSignupPassword" />
+                    </div>
+
+                    <div class="password-wrapper">
+                        <input type="password" name="confirm_password" placeholder="Confirm Password" id="confirmPassword" required />
+                        <img src="https://cdn-icons-png.flaticon.com/512/565/565655.png" alt="Show" id="toggleConfirmPassword" />
+                    </div>
+
+                    <div class="terms">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" required />
+                            <span class="checkmark"></span>
+                            I agree to the <a href="#" id="termsLink">Terms & Privacy Policy</a>
+                        </label>
+                    </div>
+                    <div class="g-recaptcha" data-sitekey="6LdjTTIrAAAAAFMFYvoIHK4X3cZ6Y-Ja52ncrRG0"></div>
+                    <button type="submit">Create Account</button>
+                    <div id="signupMessages"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms & Privacy Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h1>Privacy Policy</h1>
+            <p>Last updated: May 08, 2025</p>
+            <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
+            <!-- Add full privacy policy content here from the PHP file -->
+            <p>For the complete privacy policy, please contact us at pccarillolaw@gmail.com</p>
+        </div>
+    </div>
+
+    <script>
+        const formContainer = document.getElementById("formContainer");
+        const loginBtn = document.getElementById("loginBtn");
+        const signupBtn = document.getElementById("signupBtn");
+
+        // Terms and Privacy Policy Modal
+        const termsLink = document.getElementById("termsLink");
+        const termsModal = document.getElementById("termsModal");
+        const closeButton = document.querySelector(".close-button");
+
+        termsLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            termsModal.style.display = "flex";
+        });
+
+        closeButton.addEventListener("click", function () {
+            termsModal.style.display = "none";
+        });
+
+        window.addEventListener("click", function (e) {
+            if (e.target === termsModal) {
+                termsModal.style.display = "none";
+            }
+        });
+        
+        // Toggle between login and signup
+        loginBtn.addEventListener("click", () => {
+            formContainer.style.transform = "translateX(0%)";
+            loginBtn.classList.add("active");
+            signupBtn.classList.remove("active");
+        });
+
+        signupBtn.addEventListener("click", () => {
+            formContainer.style.transform = "translateX(-50%)";
+            signupBtn.classList.add("active");
+            loginBtn.classList.remove("active");
+        });
+
+        // Password toggle function
+        function setupToggle(toggleId, inputId) {
+            const toggle = document.getElementById(toggleId);
+            const input = document.getElementById(inputId);
+
+            toggle.addEventListener("click", function () {
+                const isPassword = input.getAttribute("type") === "password";
+                input.setAttribute("type", isPassword ? "text" : "password");
+                toggle.src = isPassword
+                    ? "https://cdn-icons-png.flaticon.com/512/159/159604.png" 
+                    : "https://cdn-icons-png.flaticon.com/512/565/565655.png";
+            });
+        }
+
+        setupToggle("toggleLoginPassword", "loginPassword");
+        setupToggle("toggleSignupPassword", "signupPassword");
+        setupToggle("toggleConfirmPassword", "confirmPassword");
+
+        // Login form submission
+        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const loginId = formData.get('login_id');
+            const password = formData.get('login_password');
+            
+            // In production, this would validate with backend
+            // For demo, simulate successful login
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('userUsername', loginId);
+            localStorage.setItem('userFirstName', 'John');
+            localStorage.setItem('userLastName', 'Doe');
+            localStorage.setItem('userEmail', loginId.includes('@') ? loginId : 'user@example.com');
+            localStorage.setItem('userMobile', '09123456789');
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        });
+
+        // Signup form submission
+        document.getElementById('signupFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirm_password');
+            
+            if (password !== confirmPassword) {
+                document.getElementById('signupMessages').innerHTML = '<p class="error-message" style="color:red;">Passwords do not match.</p>';
+                return;
+            }
+            
+            // In production, this would create account in backend
+            // For demo, show success message
+            document.getElementById('signupMessages').innerHTML = '<p class="success-message" style="color:green;">Account created successfully! You can now log in.</p>';
+            
+            // Switch to login tab after 2 seconds
+            setTimeout(() => {
+                loginBtn.click();
+                document.getElementById('signupMessages').innerHTML = '';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
